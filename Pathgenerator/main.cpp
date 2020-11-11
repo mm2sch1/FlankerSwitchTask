@@ -119,6 +119,22 @@ int getCase(SVertex &from, SVertex &to) {
 	return 0;
 }
 
+int chooseVertex(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram, int** &weights, vector<int> &vweights, int &lastVertex) {
+	int size = vertices.size();
+	int c = 0;
+	int newVertex = 0;
+	for (int j = 0; j < size; j++) {
+		// now we need to choose according to the weights
+		c = matrix[lastVertex][j];
+		if (c > 0) {
+			newVertex = j;
+			break;
+		}
+	}
+	lastVertex = newVertex;
+	return newVertex;
+}
+
 void deepSearch(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram) {
 	int** weights = nullptr;
 	int size = vertices.size();
@@ -128,17 +144,15 @@ void deepSearch(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram
 
 	int vsize = 0;
 	int pathsize = 64;
-	vector<SVertex> path(pathsize);
+	int lastVertex = 0;
+	vector<int> path(pathsize);
 	while (vsize != pathsize) {
-		path[vsize] = vertices[vsize];
+		path[vsize] = chooseVertex(vertices, matrix, histogram, weights, vweights, lastVertex);
+		cout << path[vsize] << endl;
 		vsize++;
 	}
 
 	exitMatrix(size, weights);
-}
-
-void chooseNextPath(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram, int** &weights, vector<int> &vweights) {
-	// geht morgen weiter
 }
 
 int main() {
@@ -171,6 +185,9 @@ int main() {
 
 	for (int i = 0; i < 16; i++)
 		cout << "class " << i+1 << " : " << histogram[i] << endl;
+
+	cout << matrix[1][1] << endl;
+	deepSearch(vertices, matrix, histogram);
 
 	exitMatrix(size, matrix);
 	
