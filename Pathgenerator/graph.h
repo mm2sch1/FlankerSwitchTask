@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <vector>
+#include <stack>
+
+using namespace std;
+
 typedef int** Matrix;
 
 class Graph {
@@ -19,14 +24,19 @@ public:
 	}
 
 	bool isSymmetric();
+	bool isRegular();
 	
-	void Dijkstra();
+	void calcGrades();
+	void search();
 
 private:
 	int m_size;
 	Matrix m_matrix;
+	vector<int> m_grades_in;
+	vector<int> m_grades_out;
 
 	bool isPath(int from, int to);
+	vector<int> getNodes(int from);
 };
 
 #endif

@@ -137,18 +137,6 @@ int main() {
 			}
 		}
 	}
-
-	cout << "is symmetric: " << graph.isSymmetric() << endl;
-	getchar();
-
-	int cnt = 0;
-	for (int c = 0; c < 16; c++) {
-		for (int i = 0; i < edges[c].size(); i++) {
-			cout << "C[" << c << "] : "<<edges[c][i].from << " - " << edges[c][i].to << endl;
-			cnt++;
-		}
-	}
-	cout << "Anzahl: " << cnt << endl;
 	
 	for (int i = 0; i < 16; i++)
 		cout << "class " << i+1 << " : " << histogram[i] << endl;
