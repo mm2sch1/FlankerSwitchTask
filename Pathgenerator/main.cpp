@@ -1,22 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
+
+#include "graph.h"
+
 using namespace std;
 
-enum Symbol {
-	S,
-	H 
-};
-
-enum Color {
-	red,
-	blue
-};
-
-enum Task {
-	symbol,
-	color
-};
+enum Symbol { S, H };
+enum Color { red, blue };
+enum Task { symbol, color };
 
 struct SVertex {
 	Task task;
@@ -29,6 +21,13 @@ struct SVertex {
 		cout << "task: " << task << " sign: " << sign  <<" csign " << csign << " hint: " << hint << " chint: " << chint << endl;
 	}
 };
+
+struct SEdge {
+	int from;
+	int to;
+};
+
+int*** g_matrix = nullptr;
 
 int initVertices(vector<SVertex> &vertices) {
 	for (Task task : { symbol, color }) {
@@ -56,24 +55,6 @@ int initVertices(vector<SVertex> &vertices) {
 	}
 
 	return vertices.size();
-}
-
-void initMatrix(int size, int** &m) {
-	m = new int*[size];
-	for (int i = 0; i < size; ++i)
-		m[i] = new int[size];
-
-	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; ++j) {
-			m[i][j] = 0;
-		}
-	}
-}
-
-void exitMatrix(int  size, int** &m) {
-	for (int i = 0; i < size; ++i)
-		delete[] m[i];
-	delete[] m;
 }
 
 int getCase(SVertex &from, SVertex &to) {
@@ -119,49 +100,19 @@ int getCase(SVertex &from, SVertex &to) {
 	return 0;
 }
 
-int chooseVertex(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram, int** &weights, vector<int> &vweights, int &lastVertex) {
-	int size = vertices.size();
-	int c = 0;
-	int newVertex = 0;
-	for (int j = 0; j < size; j++) {
-		// now we need to choose according to the weights
-		c = matrix[lastVertex][j];
-		if (c > 0) {
-			newVertex = j;
-			break;
-		}
-	}
-	lastVertex = newVertex;
-	return newVertex;
-}
-
 void deepSearch(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram) {
-	int** weights = nullptr;
 	int size = vertices.size();
-	vector<int> vweights(size);
-
-	initMatrix(size, weights);
-
-	int vsize = 0;
-	int pathsize = 64;
-	int lastVertex = 0;
-	vector<int> path(pathsize);
-	while (vsize != pathsize) {
-		path[vsize] = chooseVertex(vertices, matrix, histogram, weights, vweights, lastVertex);
-		cout << path[vsize] << endl;
-		vsize++;
-	}
-
-	exitMatrix(size, weights);
 }
 
 int main() {
 	vector<SVertex> vertices;
 	vector<int> histogram(16);
-	int** matrix = nullptr;
+	vector<vector<SEdge> > edges(16);
 	
 	int size = initVertices(vertices);
-	initMatrix(size, matrix);
+
+	Graph graph(size);
+	Matrix matrix = graph.getMatrix();
 
 	for (int i = 0; i < 16; i++)
 		histogram[i] = 0;
@@ -175,22 +126,35 @@ int main() {
 				SVertex from = vertices[i];
 				SVertex to = vertices[j];
 				int c = getCase(from, to);
-				if (c > 0)
+				if (c > 0) {
 					histogram[c - 1]++;
+					SEdge edge;
+					edge.from = i;
+					edge.to = j;
+					edges[c - 1].push_back(edge);
+				}
 				matrix[i][j] = c;
 			}
 		}
 	}
 
+	cout << "is symmetric: " << graph.isSymmetric() << endl;
+	getchar();
 
+	int cnt = 0;
+	for (int c = 0; c < 16; c++) {
+		for (int i = 0; i < edges[c].size(); i++) {
+			cout << "C[" << c << "] : "<<edges[c][i].from << " - " << edges[c][i].to << endl;
+			cnt++;
+		}
+	}
+	cout << "Anzahl: " << cnt << endl;
+	
 	for (int i = 0; i < 16; i++)
 		cout << "class " << i+1 << " : " << histogram[i] << endl;
 
 	cout << matrix[1][1] << endl;
 	deepSearch(vertices, matrix, histogram);
-
-	exitMatrix(size, matrix);
-	
 
 	getchar();
 	return 0;
