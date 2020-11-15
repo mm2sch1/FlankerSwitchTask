@@ -22,13 +22,6 @@ struct SVertex {
 	}
 };
 
-struct SEdge {
-	int from;
-	int to;
-};
-
-int*** g_matrix = nullptr;
-
 int initVertices(vector<SVertex> &vertices) {
 	for (Task task : { symbol, color }) {
 		for (Symbol sign : { S, H }) {
@@ -100,14 +93,10 @@ int getCase(SVertex &from, SVertex &to) {
 	return 0;
 }
 
-void deepSearch(vector<SVertex> &vertices, int** &matrix, vector<int> &histogram) {
-	int size = vertices.size();
-}
-
 int main() {
 	vector<SVertex> vertices;
 	vector<int> histogram(16);
-	vector<vector<SEdge> > edges(16);
+	vector<vector<Edge> > edges(16);
 	
 	int size = initVertices(vertices);
 
@@ -128,9 +117,10 @@ int main() {
 				int c = getCase(from, to);
 				if (c > 0) {
 					histogram[c - 1]++;
-					SEdge edge;
+					Edge edge;
 					edge.from = i;
 					edge.to = j;
+					edge.c = c;
 					edges[c - 1].push_back(edge);
 				}
 				matrix[i][j] = c;
@@ -140,9 +130,6 @@ int main() {
 	
 	for (int i = 0; i < 16; i++)
 		cout << "class " << i+1 << " : " << histogram[i] << endl;
-
-	cout << matrix[1][1] << endl;
-	deepSearch(vertices, matrix, histogram);
 
 	getchar();
 	return 0;

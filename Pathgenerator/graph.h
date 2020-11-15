@@ -8,6 +8,12 @@
 
 using namespace std;
 
+struct Edge {
+	int from;
+	int to;
+	int c;
+};
+
 typedef int** Matrix;
 
 class Graph {
@@ -36,7 +42,7 @@ private:
 	vector<int> m_grades_out;
 
 	bool isPath(int from, int to);
-	vector<int> getNodes(int from);
+	vector<Edge> getNodes(int from);
 };
 
 #endif

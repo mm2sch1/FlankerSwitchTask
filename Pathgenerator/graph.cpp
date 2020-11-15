@@ -42,7 +42,6 @@ bool Graph::isRegular() {
 	return true;
 }
 
-
 void Graph::calcGrades() {
 	for (int i = 0; i < m_size; ++i) {
 		for (int j = 0; j < m_size; j++) {
@@ -54,11 +53,16 @@ void Graph::calcGrades() {
 	}
 }
 
-vector<int> Graph::getNodes(int from) {
-	vector<int> nodes;
+vector<Edge> Graph::getNodes(int from) {
+	vector<Edge> nodes;
 	for (int j = 0; j < m_size; ++j) {
-		if (m_matrix[from][j] > 0)
-			nodes.push_back(j);
+		if (m_matrix[from][j] > 0) {
+			Edge edge;
+			edge.from = from;
+			edge.to = j;
+			edge.c = m_matrix[from][j];
+			nodes.push_back(edge);
+		}
 	}
 	return nodes;
 }
