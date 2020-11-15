@@ -71,26 +71,29 @@ vector<Edge> Graph::getEdges(int from) {
 	return nodes;
 }
 
-void Graph::search() {
+vector<int> Graph::search() {
 	vertexWeights.resize(m_size);
 	fill(vertexWeights.begin(), vertexWeights.end(), 0);
 
 	edgeWeights.resize(m_num_classes);
-	fill(edgeWeights.begin(), edgeWeights.end(), 0);
+	fill(edgeWeights.begin(), edgeWeights.end(), 8);
 
 	vector<int> path;
-	int from = 0;
+
+	std::uniform_int_distribution<int> distribution(0, m_size - 1);
+	int from = distribution(generator);
+	
 	path.push_back(from);
 	for (int i = 0; i < 63; ++i) {
 		Edge edge = chooseEdge(from);
+		if (edge.c == -1) {
+			break;
+		}
 		path.push_back(edge.to);
 		from = edge.to;
 	}
 
-	cout << "Path (" << path.size() << ")" << path[0];
-	for (int i = 1; i < path.size(); i++)
-		cout << " - " << path[i];
-	cout << endl;
+	return path;
 }
 
 bool Graph::isPath(int from, int to) {
@@ -99,27 +102,53 @@ bool Graph::isPath(int from, int to) {
 
 Edge Graph::chooseEdge(int from) {
 	Edge result;
+	result.c = -1;
 	vector<Edge> edges = getEdges(from);
 	set<int> classes;
 
 	for (int i = 0; i < edges.size(); i++)
 		classes.insert(edges[i].c);
-	cout << "NumClasses: " << classes.size() << endl;
 
 	int size = 0;
 	for (auto it = classes.begin(); it != classes.end(); ++it) {
 		int c = *it;
-		size += edgeWeights[c];
+		size += edgeWeights[c-1];
 	}
+
+	if (size == 0)
+		return result;
 
 	std::uniform_int_distribution<int> distribution(0, size-1);
 	int number = distribution(generator);
 	
+	int cnt = 0;
+	int result_class = -1;
 	for (auto it = classes.begin(); it != classes.end(); ++it) {
 		int c = *it;
-		size += edgeWeights[c];
+		cnt += edgeWeights[c-1];
+
+		if (number < cnt) {
+			result_class = c;
+			break;
+		}
 	}
 
-	result = edges[number];
+	if (result_class == -1)
+		return result;
+
+	vector<Edge> possibilities;
+	for (int i = 0; i < edges.size(); i++) {
+		if (edges[i].c == result_class)
+			possibilities.push_back(edges[i]);
+	}
+
+	edgeWeights[result_class-1] /= 2;
+
+	if (possibilities.size() > 0) {
+		std::uniform_int_distribution<int> distribution2(0, possibilities.size() - 1);
+		number = distribution2(generator);
+
+		result = possibilities[number];
+	}
 	return result;
 }

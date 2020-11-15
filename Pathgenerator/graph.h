@@ -36,7 +36,7 @@ public:
 	bool isRegular();
 	
 	void calcGrades();
-	void search();
+	vector<int> search();
 
 private:
 	std::default_random_engine generator;

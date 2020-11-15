@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include "graph.h"
 
@@ -93,6 +94,23 @@ int getCase(SVertex &from, SVertex &to) {
 	return 0;
 }
 
+void writePathesToFile(string filename, vector<vector<int> > &pathes) {
+	ofstream file;
+	file.open(filename);
+
+	int size = pathes.size();
+	for (int i = 0; i < size; ++i) {
+		int psize = pathes[i].size()-1;
+
+		for (int v = 0; v < psize; ++v) {
+			file << pathes[i][v] << ";";
+		}
+		file << pathes[i][psize] << "\n";
+	}
+
+	file.close();
+}
+
 int main() {
 	vector<SVertex> vertices;
 	vector<int> histogram(16);
@@ -128,7 +146,18 @@ int main() {
 		}
 	}
 	
-	graph.search();
+	vector<vector<int> > pathes;
+	int cnt = 0;
+	while (cnt < 1000) {
+		vector<int> path = graph.search();
+		if (path.size() == 64) {
+			pathes.push_back(path);
+			cout << "Path found " << cnt << endl;
+			cnt++;
+		}
+	}
+
+	writePathesToFile("out.csv", pathes);
 
 	getchar();
 	return 0;
