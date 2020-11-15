@@ -5,6 +5,9 @@
 
 #include <vector>
 #include <stack>
+#include <random>
+#include <set>
+#include <iostream>
 
 using namespace std;
 
@@ -18,7 +21,7 @@ typedef int** Matrix;
 
 class Graph {
 public:
-	Graph(int size);
+	Graph(int size, int num_classes);
 	~Graph();
 
 	Matrix& getMatrix() {
@@ -36,13 +39,20 @@ public:
 	void search();
 
 private:
+	std::default_random_engine generator;
+
 	int m_size;
+	int m_num_classes;
 	Matrix m_matrix;
 	vector<int> m_grades_in;
 	vector<int> m_grades_out;
 
 	bool isPath(int from, int to);
-	vector<Edge> getNodes(int from);
+	vector<Edge> getEdges(int from);
+	Edge chooseEdge(int from);
+
+	vector<int> vertexWeights;
+	vector<int> edgeWeights;
 };
 
 #endif

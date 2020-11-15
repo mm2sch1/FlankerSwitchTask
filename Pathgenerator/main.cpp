@@ -100,7 +100,7 @@ int main() {
 	
 	int size = initVertices(vertices);
 
-	Graph graph(size);
+	Graph graph(size, 16);
 	Matrix matrix = graph.getMatrix();
 
 	for (int i = 0; i < 16; i++)
@@ -128,8 +128,7 @@ int main() {
 		}
 	}
 	
-	for (int i = 0; i < 16; i++)
-		cout << "class " << i+1 << " : " << histogram[i] << endl;
+	graph.search();
 
 	getchar();
 	return 0;
