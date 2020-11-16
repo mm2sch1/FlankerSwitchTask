@@ -19,7 +19,14 @@ struct SVertex {
 	Color chint;
 
 	void toString() {
-		cout << "task: " << task << " sign: " << sign  <<" csign " << csign << " hint: " << hint << " chint: " << chint << endl;
+		#ifndef winbuild
+			cout << ((task == symbol) ? "letter" : "color") << ", ";
+			cout << ((chint == red) ? "\u001b[31m" : "\u001b[34m" ) << ((hint == S) ? "S" : "H") << "\u001b[0m";
+			cout << ((csign == red) ? "\u001b[31m" : "\u001b[34m" )<< ((sign == S) ? "S" : "H") << "\u001b[0m";
+			cout << ((chint == red) ? "\u001b[31m" : "\u001b[34m" ) << ((hint == S) ? "S" : "H") << "\u001b[0m\n";
+		#else
+			cout << "task: " << task << " sign: " << sign  <<" csign " << csign << " hint: " << hint << " chint: " << chint << endl;
+		#endif
 	}
 };
 
@@ -44,7 +51,7 @@ int initVertices(vector<SVertex> &vertices) {
 	}
 
 	for (int i = 0; i < vertices.size(); i++) {
-		cout << i << ": ";
+		cout << "\t" << i << ": ";
 		vertices[i].toString();
 	}
 
@@ -158,7 +165,5 @@ int main() {
 	}
 
 	writePathesToFile("out.csv", pathes);
-
-	getchar();
 	return 0;
 }
